@@ -19,11 +19,20 @@ const Chat = () => {
         `Fetching chat content for bin: ${bin}, filename: ${filename}`
       );
 
+      // Make API call to fetch the file
       axios
-        .get(`https://filebin.net/${bin}/${filename}`)
+        .get(`https://filebin.net/${bin}/${filename}`, { responseType: "blob" }) // Set responseType to 'blob'
         .then((response) => {
           console.log("API response:", response);
-          setChatContent(response.data);
+          // Create a URL for the blob and download it
+          const url = window.URL.createObjectURL(new Blob([response.data]));
+          const a = document.createElement("a");
+          a.href = url;
+          a.download = filename; // Set the filename for download
+          document.body.appendChild(a);
+          a.click();
+          a.remove();
+          setChatContent("File downloaded successfully.");
         })
         .catch((error) => {
           console.error("Error fetching chat content:", error);
@@ -93,6 +102,10 @@ const Chat = () => {
           {profileName}
         </Typography>
       </Box>
+
+      <Typography variant="body1" sx={{ color: "#fff" }}>
+        {chatContent}
+      </Typography>
 
       {chatContent?.split("\n").map((line, index) => {
         const isSender = index % 2 === 0;
