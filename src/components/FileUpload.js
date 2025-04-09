@@ -5,6 +5,7 @@ import JSZip from 'jszip';
 import { v4 as uuidv4 } from 'uuid';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import { keyframes } from '@mui/system';
+import SuccessModal from './SuccessModal';
 
 const cookAnimation = keyframes`
   0% { transform: translateX(-100%); }
@@ -80,6 +81,10 @@ const FileUpload = () => {
     setError('');
   };
 
+  const handleCloseDialog = () => {
+    setUploadSuccess(false);
+  };
+
   return (
     <Container maxWidth="md" sx={{ mt: 8 }}>
       <Paper elevation={6} sx={{ p: 6, textAlign: 'center', backgroundColor: '#424242', color: '#fff' }}>
@@ -111,43 +116,13 @@ const FileUpload = () => {
           Upload
         </Button>
         {loading && <CircularProgress sx={{ mt: 2 }} />}
-        {uploadSuccess && (
-          <Box sx={{ mt: 4, textAlign: 'left', backgroundColor: '#333', p: 2, borderRadius: 2 }}>
-            <Typography variant="h6">Your file upload was successful!</Typography>
-            <Typography variant="body2" sx={{ mt: 2 }}>
-              To view your folder visit:
-              <TextField
-                fullWidth
-                value={folderLink}
-                InputProps={{
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      <IconButton onClick={() => handleCopy(folderLink)}>
-                        <ContentCopyIcon sx={{ color: '#fff' }} />
-                      </IconButton>
-                    </InputAdornment>
-                  ),
-                }}
-                sx={{ mt: 1, mb: 2, input: { color: '#fff' } }}
-              />
-              To share the download link:
-              <TextField
-                fullWidth
-                value={downloadLink}
-                InputProps={{
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      <IconButton onClick={() => handleCopy(downloadLink)}>
-                        <ContentCopyIcon sx={{ color: '#fff' }} />
-                      </IconButton>
-                    </InputAdornment>
-                  ),
-                }}
-                sx={{ mt: 1, input: { color: '#fff' } }}
-              />
-            </Typography>
-          </Box>
-        )}
+        <SuccessModal
+          open={uploadSuccess}
+          onClose={handleCloseDialog}
+          folderLink={folderLink}
+          downloadLink={downloadLink}
+          handleCopy={handleCopy}
+        />
         {chatContent && (
           <Box sx={{ mt: 4, textAlign: 'left', backgroundColor: '#333', p: 2, borderRadius: 2 }}>
             <Typography variant="h6">Chat Content:</Typography>
