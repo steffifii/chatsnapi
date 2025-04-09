@@ -1,6 +1,7 @@
 import React from 'react';
 import { Modal, Box, Typography, TextField, InputAdornment, IconButton } from '@mui/material';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
+import CloseIcon from '@mui/icons-material/Close';
 
 const SuccessModal = ({ open, onClose, folderLink, downloadLink, handleCopy }) => (
   <Modal open={open} onClose={onClose}>
@@ -15,6 +16,13 @@ const SuccessModal = ({ open, onClose, folderLink, downloadLink, handleCopy }) =
       boxShadow: 24, 
       p: 4 
     }}>
+      <IconButton
+        aria-label="close"
+        onClick={onClose}
+        sx={{ position: 'absolute', right: 8, top: 8, color: '#fff' }}
+      >
+        <CloseIcon />
+      </IconButton>
       <Typography variant="h6" component="h2">
         Your file upload was successful!
       </Typography>
