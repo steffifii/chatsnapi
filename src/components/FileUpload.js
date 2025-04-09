@@ -41,7 +41,8 @@ const FileUpload = () => {
 
     try {
       console.log('Uploading to filebin.net...');
-      const response = await axios.post(`https://filebin.net/`, formData, {
+      const bin = uuidv4(); // Generate a unique bin ID
+      const response = await axios.post(`https://filebin.net/${bin}/${sanitizedFileName}`, formData, {
         headers: {
           'Content-Type': 'application/octet-stream',
         },
