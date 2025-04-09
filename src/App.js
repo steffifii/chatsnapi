@@ -3,6 +3,7 @@ import { Paper } from "@mui/material";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import Container from "@mui/material/Container";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 
 import FileUpload from "./components/FileUpload";
 import Chat from "./components/Chat";
@@ -29,24 +30,14 @@ function App() {
 
   return (
     <ThemeProvider theme={theme}>
-      <Container maxWidth="md" sx={{ mt: 8 }}>
-        <Paper
-          elevation={6}
-          sx={{
-            p: 6,
-            textAlign: "center",
-            backgroundColor: "#424242",
-            color: "#fff",
-          }}
-        >
-          <CssBaseline />
-          <Container maxWidth="sm" sx={{ mt: 8 }}>
-            <header className="App-header">
-              {chatContent && <Chat chatContent={chatContent} />}
-              <FileUpload setChatContent={setChatContent} />
-            </header>
-          </Container>
-        </Paper>
+      <CssBaseline />
+      <Container>
+        <Router>
+          <Routes>
+            <Route path="/" element={<FileUpload />} />
+            <Route path="/view" element={<Chat />} />
+          </Routes>
+        </Router>
       </Container>
     </ThemeProvider>
   );

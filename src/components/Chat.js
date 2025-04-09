@@ -1,7 +1,61 @@
-import React from "react";
-import { Box, Typography, Chip } from "@mui/material";
+import React, { useEffect, useState } from "react";
+import { Box, Typography, Avatar, Chip } from "@mui/material";
+import { useLocation } from "react-router-dom";
+import axios from "axios";
 
-const Chat = ({ chatContent }) => {
+const Chat = () => {
+  const location = useLocation();
+  const [chatContent, setChatContent] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const queryParams = new URLSearchParams(location.search);
+    const bin = queryParams.get("bin");
+    const filename = queryParams.get("filename") || "";
+
+    if (bin && filename) {
+      console.log(
+        `Fetching chat content for bin: ${bin}, filename: ${filename}`
+      );
+
+      axios
+        .get(`https://filebin.net/${bin}/${filename}`)
+        .then((response) => {
+          console.log("API response:", response);
+          setChatContent(response.data);
+        })
+        .catch((error) => {
+          console.error("Error fetching chat content:", error);
+          setError("Failed to fetch chat content.");
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    } else {
+      setLoading(false);
+    }
+  }, [location]);
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>{error}</div>;
+  }
+
+  const extractName = (filename) => {
+    if (!filename) return "Unknown";
+    const match = filename.match(/WhatsAppChat-(.*?)(\(\d+\))?\.zip/);
+    if (match && match[1]) {
+      return match[1].replace(/([A-Z])/g, " $1").trim();
+    }
+    return "Unknown";
+  };
+
+  const profileName = extractName(location.search.split("filename=")[1]);
+
   const formatDate = (dateString) => {
     const date = new Date(dateString);
     const now = new Date();
@@ -12,18 +66,38 @@ const Chat = ({ chatContent }) => {
       return date.toLocaleDateString("en-US", { weekday: "long" });
     } else {
       return date.toLocaleDateString("en-US", {
+        weekday: "short",
         month: "short",
         day: "numeric",
       });
     }
   };
 
+  const formatTimestamp = (index) => {
+    return index % 2 === 0 ? "12:00 AM" : "12:01 AM";
+  };
+
   return (
     <Box sx={{ mt: 4, p: 2, backgroundColor: "#111", borderRadius: 2 }}>
-      {chatContent.split("\n").map((line, index) => {
+      {/* Header */}
+      <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
+        <Avatar
+          sx={{
+            mr: 2,
+            width: 56,
+            height: 56,
+            backgroundColor: "#ccc",
+          }}
+        />
+        <Typography variant="h6" sx={{ color: "#fff" }}>
+          {profileName}
+        </Typography>
+      </Box>
+
+      {chatContent?.split("\n").map((line, index) => {
         const isSender = index % 2 === 0;
-        const timestamp = "12:00 AM"; // Replace with actual timestamp logic
-        const dateChip = index === 0 || index % 5 === 0; // Example logic for date chip
+        const timestamp = formatTimestamp(index);
+        const dateChip = index === 0 || index % 5 === 0;
 
         return (
           <React.Fragment key={index}>

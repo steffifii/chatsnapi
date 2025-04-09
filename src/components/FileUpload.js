@@ -11,6 +11,7 @@ import JSZip from "jszip";
 import { v4 as uuidv4 } from "uuid";
 import { keyframes } from "@mui/system";
 import SuccessModal from "./SuccessModal";
+import { useNavigate } from "react-router-dom";
 
 const cookAnimation = keyframes`
   0% { transform: translateX(-100%); }
@@ -18,13 +19,14 @@ const cookAnimation = keyframes`
   100% { transform: translateX(100%); }
 `;
 
-const FileUpload = ({ setChatContent }) => {
+const FileUpload = () => {
   const [file, setFile] = useState(null);
   const [uploadSuccess, setUploadSuccess] = useState(false);
   const [folderLink, setFolderLink] = useState("");
   const [downloadLink, setDownloadLink] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const navigate = useNavigate();
 
   const handleFileChange = (event) => {
     setFile(event.target.files[0]);
@@ -45,7 +47,7 @@ const FileUpload = ({ setChatContent }) => {
 
     try {
       console.log("Uploading to filebin.net...");
-      const bin = uuidv4(); 
+      const bin = uuidv4();
       const response = await axios.post(
         `https://filebin.net/${bin}/${sanitizedFileName}`,
         formData,
@@ -65,14 +67,10 @@ const FileUpload = ({ setChatContent }) => {
         `https://filebin.net/${binId}/${encodeURIComponent(filename)}`
       );
 
-      const zip = new JSZip();
-      const zipContent = await zip.loadAsync(file);
-      const txtFile = Object.keys(zipContent.files).find((name) =>
-        name.endsWith(".txt")
+      // Redirect to /view with query parameters
+      navigate(
+        `/view?bin=${bin}&filename=${encodeURIComponent(sanitizedFileName)}`
       );
-      const chatText = await zipContent.files[txtFile].async("text");
-      setChatContent(chatText);
-      console.log("Chat content extracted");
     } catch (error) {
       console.error("Error uploading file:", error);
       setError(`Missing filename request header: ${error.message}`);
@@ -123,6 +121,7 @@ const FileUpload = ({ setChatContent }) => {
         color="primary"
         onClick={handleUpload}
         sx={{ mb: 3 }}
+        disabled={loading}
       >
         Upload
       </Button>
