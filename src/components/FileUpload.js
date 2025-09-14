@@ -222,69 +222,72 @@ const FileUpload = () => {
             </Typography>
 
             {/* Upload area */}
-            <Box
-              sx={{
-                border: "2px dashed #25D366",
-                borderRadius: 3,
-                p: 4,
-                mb: 3,
-                background:
-                  "linear-gradient(135deg, rgba(37,211,102,0.05) 0%, rgba(18,140,126,0.05) 100%)",
-                transition: "all 0.3s ease",
-                "&:hover": {
-                  borderColor: "#128C7E",
+            <label htmlFor="file-upload">
+              <Box
+                sx={{
+                  border: "2px dashed #25D366",
+                  borderRadius: 3,
+                  p: 4,
+                  mb: 3,
                   background:
-                    "linear-gradient(135deg, rgba(37,211,102,0.1) 0%, rgba(18,140,126,0.1) 100%)",
-                  transform: "translateY(-2px)",
-                },
-              }}
-            >
-              <input
-                id="file-upload"
-                type="file"
-                accept=".zip"
-                onChange={handleFileChange}
-                style={{ display: "none" }}
-              />
+                    "linear-gradient(135deg, rgba(37,211,102,0.05) 0%, rgba(18,140,126,0.05) 100%)",
+                  transition: "all 0.3s ease",
+                  cursor: "pointer",
+                  "&:hover": {
+                    borderColor: "#128C7E",
+                    background:
+                      "linear-gradient(135deg, rgba(37,211,102,0.1) 0%, rgba(18,140,126,0.1) 100%)",
+                    transform: "translateY(-2px)",
+                  },
+                }}
+              >
+                <input
+                  id="file-upload"
+                  type="file"
+                  accept=".zip"
+                  onChange={handleFileChange}
+                  style={{ display: "none" }}
+                />
 
-              {file ? (
-                <Fade in timeout={500}>
+                {file ? (
+                  <Fade in timeout={500}>
+                    <Box>
+                      <CheckCircle
+                        sx={{
+                          fontSize: 50,
+                          color: "#25D366",
+                          mb: 2,
+                          animation: `${bubbleAnimation} 0.6s ease-out`,
+                        }}
+                      />
+                      <Typography variant="h6" sx={{ color: "#25D366", mb: 1 }}>
+                        File Selected!
+                      </Typography>
+                      <Typography variant="body2" sx={{ color: "#666" }}>
+                        {file.name}
+                      </Typography>
+                    </Box>
+                  </Fade>
+                ) : (
                   <Box>
-                    <CheckCircle
+                    <CloudUpload
                       sx={{
                         fontSize: 50,
                         color: "#25D366",
                         mb: 2,
-                        animation: `${bubbleAnimation} 0.6s ease-out`,
+                        animation: `${floatAnimation} 2s ease-in-out infinite`,
                       }}
                     />
-                    <Typography variant="h6" sx={{ color: "#25D366", mb: 1 }}>
-                      File Selected!
+                    <Typography variant="h6" sx={{ color: "#075E54", mb: 1 }}>
+                      Choose Your Chat Export
                     </Typography>
                     <Typography variant="body2" sx={{ color: "#666" }}>
-                      {file.name}
+                      Select a .zip file exported from WhatsApp
                     </Typography>
                   </Box>
-                </Fade>
-              ) : (
-                <Box>
-                  <CloudUpload
-                    sx={{
-                      fontSize: 50,
-                      color: "#25D366",
-                      mb: 2,
-                      animation: `${floatAnimation} 2s ease-in-out infinite`,
-                    }}
-                  />
-                  <Typography variant="h6" sx={{ color: "#075E54", mb: 1 }}>
-                    Choose Your Chat Export
-                  </Typography>
-                  <Typography variant="body2" sx={{ color: "#666" }}>
-                    Select a .zip file exported from WhatsApp
-                  </Typography>
-                </Box>
-              )}
-            </Box>
+                )}
+              </Box>
+            </label>
 
             {/* Action buttons */}
             <Box sx={{ display: "flex", gap: 2, justifyContent: "center" }}>
